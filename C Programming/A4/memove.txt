@@ -1,0 +1,1 @@
+//memmove(fittest->data, population[0]->image.data, fittest->width*fittest->height*sizeof(PIXEL));

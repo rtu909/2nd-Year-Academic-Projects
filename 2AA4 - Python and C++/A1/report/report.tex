@@ -1,0 +1,148 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{listings}
+\usepackage{booktabs}
+
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{Assignment 1 Solution}
+\author{Raymond Tu tur1}
+\date{\today}
+
+\begin {document}
+
+\maketitle
+
+Part 2 of Assignment 1, discussing testing both my own modules as well as my partner's modules, any assumptions made during test and possible improvements to the design.
+
+\section{Testing of the Original Program}
+
+\subsection{General Rationale for Test Cases}
+
+In general, my approach to the test cases were to have a general base case, that is a case with normal inputs as could be expected when the modules are implemented in real life. Afterwards, the latter test cases are boundary test cases made to test potential unaccounted for errors in the modules, while these test cases are unlikely to happen in actual use, proving that the modules work for these boundary cases proves the robustness of the code. If the module passes these 2 kinds of test cases, then it helps reinforce the robustness and reliability of the code.
+
+\subsection{Test Cases for sort(S)}
+
+For the first test case for the sort(S) function, it was a general base case with arbitrary macIDs and names, and GPAs within a range of 1 to 12. The second test case was a boundary case, consisting of GPAs that had duplicates, and only had the values of 1 and 0. This was chosen to see how the function responded to sorting the boundary case of a GPA of 1 or 0, and to see how it would sort duplicates, with the assumption that the entry that came first in the input list would be sorted first in the case of a duplicate. The third test case is a boundary test case where the input is an empty list, with the assumption that it would return an empty list.
+
+\subsection{Test Cases for average(L, g)}
+
+The majority of the test cases for the average(L, g) function were tested for both male and female as input parameter for gender, this will be considered 1 test case. Additionally, an assumption made for the average function is that the returned average GPA would be rounded to a single decimal place, much like the one's on our transcript.  The first test case for the average(L, g) function was a base case, with arbitrary student details and GPAs within a range of 1 to 12. The second test case is with multiple GPAs of 1 or 0 to test the program's accuracy with results that are less than 1. The third test case consisted of an empty list for a boundary case to see if the program correctly returns 0 instead of attempting to a division over 0. The fourth test case only has GPAs with 0 to see if the program correctly returns 0 as a boundary case.
+
+\subsection{Test cases for allocate(S, F, C)}
+
+For the allocate function several assumptions were made. The first assumption is that even if a student has free choice, and if their GPA is below 4, they will not be allocated. The second assumption made was that free choice students will receive their first choice regardless of circumstances, even if there is not enough department capacity. The department capacity is checked after allocating the free choice students, and if a department is overloaded, then it is considered to be full (ie. has negative seats left). The third assumption made is that all students with free choice are taken from the list of student dictionaries passed into the program. The last assumption made is that any students who were not allocated would ideally be given a choice to enter any department that still has spots, however this is out of the scope of the function.
+
+The first test case for the allocate function was a general base case, with reasonable department capacities and varied free choice students. The second test case was a boundary test case where an empty list of student dictionaries is passed in, expecting a returned empty dictionary. The third test case is a boundary test case where all the departments are full and there are no free choice students, to see if the program correctly does not allocate any students.  The final test case is to see if it follows the assumption made that free choice students are allocated even though there are not enough department spaces for them. 
+
+\newpage
+
+\subsection{Results of Testing Original Code}
+
+The final rendition of the CalcModule.py passed all of my test cases without issue. However, prior to it there were several problems encountered requiring the module be changed to account for these boundary cases. While the majority of the boundary cases passed without issue for the sort and allocate function, there were errors encountered when testing the average function with test cases 2 and 3. In the second test case, the function had errors in returning a correct average due to the inaccuracy of floating point numbers. In the third test case, the function originally did not take into account the potential case for an empty list leading to a division over 0. 
+
+Additionally, in my renewed testing I realized my test case expected output for the first test case for the allocate function was incorrect, resulting in not catching the critical error of the free choice students being allocated twice. This error was changed in the testCalc.py before testing my partner files. 
+
+
+\section{Results of Testing Partner's Code}
+
+Without any modifications to my partner's code, the test module failed to run due to their module being reliant on importing modules outside of the CalcModule.py, namely a1\_constants and a1\_utility. In an attempt to fix my partner's code to run my test cases, I commented out the import statements and made assumptions of what they intended to import based on the variable names. The 2 values changed throughout my partner's code were the 2 constants imported, MIN\_PASSING\_GPA and MAX\_GPA. I assumed they were referring to the minimum GPA to pass and the maximum possible GPA, so I replaced these constants with the values 4 and 12 respectively. Additionally, I commented out the called function remove\_duplicate(students) line that was calling a function from the a1\_utility module. After these changes, the testCalc.py ran successfully without syntax errors.
+
+For the sort(S) function, all 3 of my test cases passed. On the other hand, all 4 of the test cases for the average function failed. For the allocate function, test cases 1 and 4 failed while 2 and 3 passed. Potential reasons for these failed test cases and problems in code will be discussed in the next section.
+
+\newpage
+
+\section{Discussion of Test Results}
+
+\subsection{Problems with Original Code}
+
+During my own testing process, there were no problems in the sort(S) function, however there were originally issues with the average(L, g) function. Test cases 2 and 3 failed, which were a result of the program not taking into account the boundary cases and incorrectly rounding the result of a floating point calculation. The first problem was fixed in the code by adding a conditional if statement to check if the given input parameter for list L was empty, if true then the program would return 0 rather than attempting a division over 0. The second problem was fixed by making the assumption that the calculated average GPAs would be rounded to a single decimal place similar to our transcripts. This fixed issue because within a single decimal place float calculations remain accurate.
+
+Additionally, while testing my own code again after having my partner's code, I've realized there is a critical error in how I deleted the allocated free choice students from my list, with del students being incorrect for my intended purpose. This resulted in free choice students being allocated twice, resulting in the first test case failing because the free choice students were not being deleted from the list. I fixed this issue to changing it to elgible\_std.remove(students), this correctly removes the allocated free choice students from the list so they are only allocated once.
+
+\subsection{Problems with Partner's Code}
+
+\subsection{Problems with the average(L, g) Function}
+
+For my partner's code, all 4 of the test cases for the average(L, g) failed. After printing out the output of each case to attempt to determine the issue, one problem that I found was that we made different assumptions for the rounding of the GPA. While I rounded the GPA to a single decimal place for increased accuracy due to the problems with calculations using floating point numbers, my partner didn't, resulting in all the test cases failing because the decimal places weren't accurate. A second potential issue with the average function is the way the average was calculated. Rather than storing the sum of the GPAs in a float or double variable, they instead decided to append these GPAs into a list and calculate the sum of the list divided by the length of the list to determine the average. This could potentially introduce errors when appending GPAs based on gender into the list, causing the average to be inaccurate.
+
+\subsection{Problems with the allocate(S, F, C) Function}
+
+For the allocate(S, F, C) function test cases 1 and 4 failed, which was the base case and the boundary case with the assumption that all free choice students are enrolled in their first choice regardless of department capacity. Test cases 2 and 3 passed, which were both boundary cases, test case 2 passed in an empty list of student dictionaries while test case 3 allocated no students due to all departments being full. This mean's that the function does correctly take into account the department capacities but is not allocating the students correctly due to the base case failing. The biggest potential factor in the failure to correctly allocate students may be due to my own modification to comment out the remove\_duplicate(students) line that was imported from their a1\_utility module. This modification as mentioned previously was done in order to have the program successfully compile. With the assumption that this helper function helped the function sort lists with duplicate macIDs, then the lack of this function would cause it to fail the test cases as I did have duplicate students at times in my own allocate before fixing the aforementioned error. For test case 4, the function failed likely due to the differing assumptions made, while I made the assumption that free choice students would be allocated regardless of department capacity. This is likely not due to an error in my partner's code, but instead the problems of natural language specification.
+
+
+\section{Critique of Design Specification}
+
+In my opinion, the natural language design specification offered lots of free form creativity and interpretation of how to solve the problem, however this resulted in many issues and confusion regardless some of the details of the modules. While the openness of the specification allowed for creativity, I would improve the specification by making some of the requirements clearer and less open to interpretation, or in other words less assumptions needing to be made. For example, specifying some details such as how many decimal places to round the GPA average to, whether free choice students can exceed department capacity, and what to do with unallocated students would greatly clarify some of the doubts had during the assignment.  Additionally, having sample outputs listed for each of the modules would greatly increase one's own confidence in the correctness of the code when testing.
+
+\newpage
+
+\section{Answers to Questions}
+
+\begin{enumerate}[(a)]
+
+\item The current average function is too specific in only calculating the average GPA for one gender in the student dictionary. To make the function more general, the function could take in a third valid g parameter as 'none', when this is specified than instead of calculating the average of a specific gender, it would calculate the average for all students. Additionally, a third parameter could be added to take in a list of free choice students, and when this parameter is passed in the function would compute the average of free choice students. Along the same line of thinking, additional parameters could be added to the sort(S) function to give it more options than sorting in descending order. For example a second parameter a\_or\_d that would specify whether the function will sort in ascending or descending order. An additional change similar to the average function would be adding a parameter to take in a list of free choice students, to only sort the free choice students in the student dictionary.
+
+\item In this context, aliasing in python refers to when a new variable is given the value of another variable, effectively becoming an 'alias' for that variable, where when one variable is changed the other is changed as well. Aliasing can definitely be an issue for dictionaries, because you may alias a key or it's value, leading bugs and confusion when trying to trace the program to find the source of an error. You might guard against these problems by making sensitive key values in the program immutable, or using a similar data type that is immutable, such as a tuple.
+
+
+\item Some potential test cases for ReadAllocationData.py, would be a general base case for each of the text files and then boundary cases. These boundary cases could consist of empty text files, or text files in an incorrect format to the one assumed, for example for the readFreeChoice(s) one boundary case could be the free choice students being listed on a single line instead of the imagined every other line format. CalcModule.py was likely selected over ReadAllocationData.py as the module to be tested because CalcModule.py had more intensive functions and more sources of error. CalcModule.py had many sources of errors, such as floating point inaccuracy and correctly allocating the students with the multitude of different factors and scenarios, and with this more assumptions had to be made. Because of the increased complexity, it lead to the testCalc.py module to be more intensive overall.
+
+\newpage
+
+\item The problem with using strings in this way is that there can easily be typos in the keys, or different interpretations of capitalization that would lead to the module being unable to be used by someone else. For example, male can be written as male, Male, MALE, etc. A potentially better way is to use a condensed form, such as a capital G to represent the key gender, or to create a an object such as a class to represent the gender key. 
+
+\item Other ways to implement records and structs in python besides a dictionary are tuples, named tuples, custom classes or the structures class.  However, even with all these options, I would not recommend changing the data structures used in the code modules for this assignment. This is due to the immutability of the tuples and named tuples, while preventing typos it would make the implementation of the allocate function increasingly difficult if every student could only be accessed but not changed. On the other hand, a custom class is even more flexible than dictionaries and may lead to problems with aliasing and other bugs when working with this data structure. If I were to change the data structure of the code modules, I would use a named tuple to have similar readability to dictionaries with the added benefit of immutability.
+
+\item If the list of strings was changed to a different data structure, such as a tuple then the CalcModule.py would have to be changed accordingly because accessing an element from a tuple is different from accessing an element in a list. If instead a custom class was created for the students and CalcModule.py was correctly modified to call the class, then CalcModule.py does not need to be modified again if the class structure changes. This is because the module would only be calling methods in the class, and the syntax to call these methods does not change based on the structure of the class, the methods would still return the next choice (ie. a string value chemical, mechanical, software etc.) or the boolean value true when there are no more choices. Both the syntax to call the methods of the class as well as the returned values stay the same, so there would be no need to modify CalcModule.py if the class data structure changes.  This demonstrates the benefits of modularity in a program.
+
+\end{enumerate}
+
+\newpage
+
+\lstset{language=Python, basicstyle=\tiny, breaklines=true, showspaces=false,
+  showstringspaces=false, breakatwhitespace=true}
+%\lstset{language=C,linewidth=.94\textwidth,xleftmargin=1.1cm}
+
+\def\thesection{\Alph{section}}
+
+\section{Code for ReadAllocationData.py}
+
+\noindent \lstinputlisting{../src/ReadAllocationData.py}
+
+\newpage
+
+\section{Code for CalcModule.py}
+
+\noindent \lstinputlisting{../src/CalcModule.py}
+
+\newpage
+
+\section{Code for testCalc.py}
+
+\noindent \lstinputlisting{../src/testCalc.py}
+
+\newpage
+
+\section{Code for Partner's CalcModule.py}
+
+\noindent \lstinputlisting{../partner/CalcModule.py}
+
+\newpage
+
+\section{Makefile}
+
+\lstset{language=make}
+\noindent \lstinputlisting{../Makefile}
+
+\end {document}

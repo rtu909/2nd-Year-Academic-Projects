@@ -1,0 +1,4 @@
+C:\Users\lchri\AppData\Local\Temp\ccsjnSva.o:main.c:(.text+0x83): undefined reference to `read_ppm'
+C:\Users\lchri\AppData\Local\Temp\ccsjnSva.o:main.c:(.text+0x132): undefined reference to `evolve_image'
+C:\Users\lchri\AppData\Local\Temp\ccsjnSva.o:main.c:(.text+0x14a): undefined reference to `write_ppm'
+collect2.exe: error: ld returned 1 exit status

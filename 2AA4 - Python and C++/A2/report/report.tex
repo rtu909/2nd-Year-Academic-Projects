@@ -1,0 +1,165 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{listings}
+\usepackage{booktabs}
+
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{Assignment 2 Solution}
+\author{Raymond Tu tur1 400137262}
+\date{\today}
+
+\begin {document}
+
+\maketitle
+
+Report for 2AA4 Assignment 2.
+
+\section{Testing of the Original Program}
+
+\subsection{Rationale for Test Case Selection}
+
+For test case selection I aimed to have as much coverage of the modules as possible, which is to test every function and it's possibilities. Due to the nature of the specification for the modules and their functions, this meant that usually functions in every module had 2 test cases, 1 as the base case which usually consisted of a standard input and expecting a standard output as in the specification, and an exception case where the test would check whether the function correctly raises it's python exception error.
+
+\subsection{Summary of Results}
+
+Overall, there were 25 test cases for testing the 3 modules in the specification. In the final submission, all 25 test cases passed, however in my own individual testing process there were failed test cases that will be elaborated on next. For coverage, SeqADT and DCapLst both had 100\% coverage, while SALst had 78\% coverage. 
+
+\subsection{Problems uncovered through testing}
+
+Notably, in my own testing process I discovered errors in the logic for raising the exceptions in DCapLst. The main error in these test cases was that I was incorrectly raising the exception so it would be called every time, when put outside of the for loop this error was resolved. An additional error was an error in translation between specification and python code, where SeqADT.next() function was incorrectly outputting the next index, this error was uncovered when testing the allocate function in SALst. The error was incorrectly returning the bounds, with s[i] instead of s[i-1], when these errors were fixed all test cases ran correctly.
+
+\section{Results of Testing Partner's Code}
+
+Due to how I structured my unit testing module, I had to combine my AALst and StdnAllocTypes files with my partner files in order for my unit testing to correctly run. This is because in my test cases for SALst, I imported these 2 modules to have more freedom in the test cases for allocate and sort, to have better coverage and a more comprehensive unit testing module overall. Out of the 25 test cases, 9 failed, 3 cases in SeqADT, 3 cases in DCapLst and 3 cases in SALst.
+
+\subsection{Errors in SeqADT}
+
+In SeqADT, the test cases for init, start and end failed. For init and start, this was only an error in the differences between the named variables, while my partner added the dunders around their variable names, the test case followed the specification with variable names s and i instead of \_\_s and \_\_i.  The end function likely failed to return the correct boolean due to the errors in the next function, which the test case relied on to test end().
+
+\subsection{Errors in DCapLst}
+
+The failed test cases in DCapLst were in the init, add and remove functions. These were mainly due to the differences in our implementation of the specification for the set of tuples, while I used a set of tuples defined in the module, my partner used a list of tuples. When this was changed accordingly the test cases passed.
+
+\subsection{Errors in SALst}
+
+The failed test cases in SALst were in the init, remove and info functions. The errors were similar to the ones in the DCapLst, being a difference in our implementation of the specification. The partner files used a list of tuples while the test cases expected a set of tuples, when this error was fixed the test cases passed.
+
+\newpage
+
+\section{Critique of Given Design Specification}
+
+In comparison to assignment 1, this time we got a formal design specification to follow, with various advantages and drawbacks. With a formal design specification, there is the benefit that the errors when testing other people's code are easily found, and usually as a result of a different implementation of the specification. Additionally, there is less room for assumptions or interpretation, the main difficulty with this assignment was understanding the specification. While it was relatively easy to understand for most modules, more complicated functions such as the sort and average function were difficult to parse through the nested quantifiers in the specification. Improvements that could be made would be to provide both a natural language specification and a formal design specification, so there is increased clarity on the implementation for the given problem.
+
+\section{Answers}
+
+\begin{enumerate}
+
+\item 
+
+In a natural language specification, such as the first assignment the benefit is that it is very easy to understand the problem and implement a solution. However, the problems with it are that many things are left open to assumption, leading to differing code between every programmer. Additionally, how to implement each solution are usually left open to interpretation. In a formal language specification, thing such as the inputs, outputs, format of the module and solution are very clear, there is little need to understand the context behind the problem but instead following the specification. However, there is difficulty with parsing a formal specification in comparison to a natural language specification, and working with a formal specification assumes the programmer is familiar with the format. Overall, while a formal specification leads to more standardized code, ideally both would be given for an assigned problem.
+
+\item
+
+The specification would need to be modified when reading the input data, if the given input has a GPA outside of the bounds between 0 and 12 the exception would be raised. While the specification could be modified to replace a record type with a new ADT it is likely not necessary, having the exception in the case of reading the data to the program would ensure the program would not work with these invalid values. Because of the modularity of the program, there are multiple methods to implement an assumption as a requirement.
+
+\newpage
+
+\item
+
+The documentation could be modified so that DCapALst is made to be a generic ADT, so it can take all types of values. Then for SALst these functions could be imported and used, reducing the amount of work and code needed for these modules to take advantage of the similarities.  For example, because of the similarity of these 2 modules, code was able to be copied and modified between these modules due to the similarity of their functions. Functions such as add or elm if specified with a general type T could then be formally defined once to avoid repetition in the specification. 
+
+\item
+
+A2 is more general than A1 due to the formal specification. Because the formal specification merely gives us the specification for the modules to implement, without any of the context for it's purpose. This means that potentially the modules from A2 could be used for other purposes other than student allocation, because of this generality it has more potential function. It is because of this lack of generality that there was more ambiguity in the implementation of the modules in A1, requiring large amounts of assumptions that often differed between programmers. A natural language specification such as in A1, while being easier to understand, is less general because these assumptions mean that the modules would only work for one very specific interpretation of the problem.
+
+\item
+
+The advantages over using SeqADT over a python list is that there is more freedom in defining additional functions to manipulate the list in SeqADT in comparison to a regular python list. An example of this is the end function that returns a boolean over whether the end of the list is reached. With SeqADT, the iteration over the list and index can be easily tracked, while for a regular python list this has to be manually tracked with a counter, which can lead to more complex and less readable code. Additionally, with SeqADT there is the opportunity for encapsulation of the state variables s and i. Each of the functions in SeqADT to access the variables are able to be controlled, so if desired it could be modified to provide more encapsulation from the user if the program is sensitive.
+
+\item
+
+Enums prevent some of the problems in A1 such as misspelling or differing capitalization for the given data types such as gender. This greatly reduces the risk of accidentally changing the name of the data type, and further improves the similarity between the code with our peers. Enums are not introduced in the specification for macids because enums have a set name, such as male or female, while macids are intended to vary for every student, so it would not make sense to use an enum for macids.
+
+
+
+\end{enumerate}
+
+\newpage
+
+\lstset{language=Python, basicstyle=\tiny, breaklines=true, showspaces=false,
+  showstringspaces=false, breakatwhitespace=true}
+\lstset{language=C,linewidth=.94\textwidth,xleftmargin=1.1cm}
+
+\def\thesection{\Alph{section}}
+
+
+\section{Code for StdntAllocTypes.py}
+
+\noindent \lstinputlisting{../src/StdntAllocTypes.py}
+
+\newpage
+
+\section{Code for SeqADT.py}
+
+\noindent \lstinputlisting{../src/SeqADT.py}
+
+\newpage
+
+\section{Code for DCapALst.py}
+
+\noindent \lstinputlisting{../src/DCapALst.py}
+
+\newpage
+
+\section{Code for AALst.py}
+
+\noindent \lstinputlisting{../src/AALst.py}
+
+\newpage
+
+\section{Code for SALst.py}
+
+\noindent \lstinputlisting{../src/SALst.py}
+
+\newpage
+
+\section{Code for Read.py}
+
+\noindent \lstinputlisting{../src/Read.py}
+
+\newpage
+
+\section{Code for test\_All.py}
+
+\noindent \lstinputlisting{../src/test_All.py}
+
+\newpage
+
+\section{Code for Partner's SeqADT.py}
+
+\noindent \lstinputlisting{../partner/SeqADT.py}
+
+\newpage
+
+\section{Code for Partner's DCapALst.py}
+
+\noindent \lstinputlisting{../partner/DCapALst.py}
+
+\newpage
+
+\section{Code for Partner's SALst.py}
+
+\noindent \lstinputlisting{../partner/SALst.py}
+
+\end {document}
